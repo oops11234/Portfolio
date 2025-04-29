@@ -61,7 +61,8 @@ const BlackjackTable = () => {
     }
   
     let adjustedTotal = total;
-    let softAceUsed = false;
+    let softAceUsed:boolean = false;
+    console.log(softAceUsed);
   
     while (adjustedTotal > 21 && aceCount > 0) {
       adjustedTotal -= 10;
@@ -123,6 +124,7 @@ const BlackjackTable = () => {
     setDealerCards(dealerGet.map((d: number) => transformCard(d)));
     setPlayerCards(playerGet.map((p: number) => transformCard(p)));
     setDealerScore(calculateHandValue(dealerGet.map((d: number) => Number(d))).toString());
+    console.log("dealerGet", dealerScore);
     setPlayerScore(calculateHandValue(playerGet.map((p: number) => Number(p))).toString());
   }
 

@@ -1,8 +1,41 @@
 [
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "gameId",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "bet",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "deckHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "GameCreated",
+		"type": "event"
+	},
+	{
 		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
+		"name": "newGame",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
 	},
 	{
 		"inputs": [
@@ -12,43 +45,61 @@
 				"type": "uint256"
 			}
 		],
-		"name": "deck",
+		"name": "games",
 		"outputs": [
 			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getDeck",
-		"outputs": [
-			{
-				"internalType": "uint8[]",
-				"name": "",
-				"type": "uint8[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getFirst4Cards",
-		"outputs": [
-			{
-				"internalType": "uint8[2]",
-				"name": "dealer",
-				"type": "uint8[2]"
+				"internalType": "address",
+				"name": "player",
+				"type": "address"
 			},
 			{
-				"internalType": "uint8[2]",
+				"internalType": "uint256",
+				"name": "bet",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "deckHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bool",
+				"name": "isActive",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_gameId",
+				"type": "uint256"
+			}
+		],
+		"name": "getGameInfo",
+		"outputs": [
+			{
+				"internalType": "address",
 				"name": "player",
-				"type": "uint8[2]"
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "bet",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "deckHash",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bool",
+				"name": "isActive",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -56,23 +107,15 @@
 	},
 	{
 		"inputs": [],
-		"name": "initDeck",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "newGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "shuffleDeck",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "nextGameId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	}
 ]

@@ -5,6 +5,7 @@ import { scoreCount } from "../utils/scoreCount";
 import { getContract } from "../hooks/useCallContract"; // 假設這是一個函數，用於獲取合約實例
 import { useGameState } from "../hooks/useGameState"; // 假設這是一個自定義的 Hook，用於管理遊戲狀態
 import ConnectModal from "../components/ConnectModal";
+import { ethers } from "ethers"; // 引入 ethers.js 庫
 
 const BlackjackTable = () => {
   // demo modal controller
@@ -13,8 +14,10 @@ const BlackjackTable = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [withContract, setWithContract] = useState<boolean>(false);
 
-  const [deck, setDeck] = useState<number[]>([])  ;
+  const [deck, setDeck] = useState<number[]>([]);
 
+
+  const [playerBetAmount, setPlayerBetAmount] = useState<number>(0);
   const [betAmount, setBetAmount] = useState<number>(0); // 下注金額
   const [realBetAmount, setRealBetAmount] = useState<number>(0); // 實際下注金額
   
@@ -124,7 +127,6 @@ const BlackjackTable = () => {
     setDealerCards(dealerGet.map((d: number) => transformCard(d)));
     setPlayerCards(playerGet.map((p: number) => transformCard(p)));
     setDealerScore(calculateHandValue(dealerGet.map((d: number) => Number(d))).toString());
-    console.log("dealerGet", dealerScore);
     setPlayerScore(calculateHandValue(playerGet.map((p: number) => Number(p))).toString());
   }
 
@@ -160,7 +162,33 @@ const BlackjackTable = () => {
       console.error("取得卡牌失敗：", err);
     }
   }
+//   const fetchCards = async () => {
+// // 1. 呼叫智能合約的 newGame，傳入下注金額（wei）
+// const tx = await contract.newGame({ value: utils.parseEther("0.01") });
 
+// // 2. 等待交易完成
+// const receipt = await tx.wait();
+
+// // 3. 從事件中取得 gameId 和其他資訊
+// const event = receipt.events?.find(e => e.event === "GameCreated");
+
+// if (event) {
+//   const gameId = event.args?.gameId;
+
+//   // 4. 呼叫合約的 view function 取得完整遊戲資料
+//   const gameInfo = await contract.getGameInfo(gameId);
+
+//   console.log("遊戲資訊：", {
+//     gameId,
+//     player: gameInfo.player,
+//     bet: ethers.utils.formatEther(gameInfo.bet),
+//     deckHash: gameInfo.deckHash,
+//     isActive: gameInfo.isActive
+//   });
+
+//   // 5. 儲存到前端狀態或跳轉到下一步遊戲邏輯
+// }
+// }
 
   const playerHit = () => {
     const nextCard = deck[0];
@@ -170,6 +198,12 @@ const BlackjackTable = () => {
     setPlayerRawCards(newPlayerCards);         // 更新玩家手牌
     setPlayerCards(newPlayerCards.map((p: number) => transformCard(Number(p)))); // 更新顯示的手牌
     setPlayerScore(calculateHandValue(newPlayerCards.map((p: number) => Number(p))).toString()); // 更新玩家分數
+    if(scoreCount(calculateHandValue(newPlayerCards.map((p: number) => Number(p)))) > 21) {
+      setTimeout(() => {
+        setModalMessage("You Bust! 😢");
+        setIsModalOpen(true);
+      }, 1000); // 延遲 1 秒（1000 毫秒
+    }
   }
   const playerStand = () => {
     setIsPlayerOver(true);
@@ -194,12 +228,14 @@ const BlackjackTable = () => {
             if (playerScoreNum > dealerScoreNum || dealerScoreNum > 21) {
               setModalMessage('You Win! 🎉');
               setIsModalOpen(true);
+              setPlayerBetAmount(playerBetAmount + realBetAmount * 2); // 玩家贏了，獲得兩倍的下注金額
             } else if (playerScoreNum < dealerScoreNum) {
               setModalMessage("You Lose! 😢");
               setIsModalOpen(true);
             } else {
               setModalMessage("It's a Tie! 🤝");
               setIsModalOpen(true);
+              setPlayerBetAmount(playerBetAmount + realBetAmount); // 平手，退回下注金額
             }
           }, 800);
           setIsGameOver(true); // 遊戲結束
@@ -223,11 +259,12 @@ const BlackjackTable = () => {
   };
 
   const handleBet = async() => {
-    if (betAmount < 0) {
-      alert("請輸入有效的下注金額！"); 
+    if (betAmount < 0 || betAmount > playerBetAmount) {
+     return  alert("請輸入有效的下注金額！");
     }
     setIsGameStarted(true); // 開始遊戲
-    setRealBetAmount(betAmount); // 更新實際下注金額
+    setPlayerBetAmount(playerBetAmount - betAmount); // 扣除玩家的下注金額
+    setRealBetAmount(Number(betAmount)); // 更新實際下注金額
     if(withContract){
       fetchCards();
     } else {
@@ -276,6 +313,7 @@ const BlackjackTable = () => {
   }; 
   const handleCancelConnect = () => {
     setShowConnectModal(false);
+    setPlayerBetAmount(2000);
   };
 
   const actionButtons = [
@@ -288,8 +326,8 @@ const BlackjackTable = () => {
   ];
 
   const displayedDealerScore = isPlayerOver 
-  ? calculateHandValue(dealerRawCards) 
-  : calculateHandValue(dealerRawCards.slice(1));
+    ? calculateHandValue(dealerRawCards) 
+      : calculateHandValue(dealerRawCards.slice(1));
 
 
   return (
@@ -307,21 +345,9 @@ const BlackjackTable = () => {
 
         {/* Player */}
         <div className="flex flex-col items-center my-6 relative">
-        {/* <svg width="500" height="150" className="absolute opacity-10 -z-10 pointer-events-none select-none">
-          <defs>
-            <path id="arcPath" d="M 50,150 A 200,200 0 0,1 450,150" />
-          </defs>
-          <text fill="#FACC15" fontSize="48" fontWeight="bold">
-            <textPath href="#arcPath" startOffset="50%" textAnchor="middle">
-              BLACKJACK
-            </textPath>
-          </text>
-        </svg> */}
-          {/* <h1 className="absolute top-0 text-[100px] font-extrabold text-yellow-400 opacity-10 
-            pointer-events-none select-none 
-            [text-shadow:_2px_2px_0_rgba(0,0,0,0.6),_4px_4px_0_rgba(0,0,0,0.4)] -z-0 uppercase">
-            Blackjack
-          </h1> */}
+          <p className="text-white mb-2 text-lg">
+            Your Current Bet Amount: {playerBetAmount} ETH
+          </p>
           {
             !isGameStarted ? (
               <div className="flex flex-col items-center my-6">
@@ -354,8 +380,8 @@ const BlackjackTable = () => {
                     Player Turn...
                   </p>
                 )}
-                <p>
-                  Your Bet: {realBetAmount} ETH
+                <p className="text-white my-4 text-lg">
+                   Your Bet In This Turn: {realBetAmount} ETH 
                 </p>
               </div>
             )
@@ -381,7 +407,7 @@ const BlackjackTable = () => {
           </div>
         </div>
         {showConnectModal && (
-          <ConnectModal onConnect={handleConnectWallet} onClose={handleCancelConnect} />
+          <ConnectModal onConnect={()=> handleConnectWallet() } onClose={()=> handleCancelConnect() } />
         )}
         {isModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

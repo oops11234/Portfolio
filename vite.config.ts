@@ -4,7 +4,7 @@ import tailwindcss from "@tailwindcss/vite"
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/oops11234.github.io/', // ← 這一定要加！
+  // base: '/Portfolio/',
   plugins: [react(),tailwindcss(),],
   server: {
     host: '0.0.0.0'

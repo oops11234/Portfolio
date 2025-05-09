@@ -7,7 +7,7 @@ export default function Navbar() {
       <div className="flex items-center space-x-4">
         <Link className="px-4 py-2 rounded-md text-black hover:underline transition-all hover:text-black visited:text-black no-underline"  to="/">Home</Link>
         <Link className="px-4 py-2 rounded-md text-black hover:underline transition"  to="/contract">BlackJack</Link>
-        <Link className="px-4 py-2 rounded-md text-black hover:underline transition"  to="/blackjackTable">BlackjackTable</Link>
+        <Link className="px-4 py-2 rounded-md text-black hover:underline transition"  to="/Portfolio/blackjackTable">BlackjackTable</Link>
       </div>
     </nav>
   );

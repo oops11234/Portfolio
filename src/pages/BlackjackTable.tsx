@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import getCardImage from "../utils/getCardImage"; // 假設這是一個函數，用於獲取卡片的圖片路徑
-import { createShuffledDeck } from "../utils/createShuffledDeck"; // 假設這是一個函數，用於創建洗牌後的牌組
+import getCardImage from "../utils/getCardImage"; 
+import { createShuffledDeck } from "../utils/createShuffledDeck"; 
 import { scoreCount } from "../utils/scoreCount";
-import { getContract } from "../hooks/useCallContract"; // 假設這是一個函數，用於獲取合約實例
-import { useGameState } from "../hooks/useGameState"; // 假設這是一個自定義的 Hook，用於管理遊戲狀態
+import { getContract } from "../hooks/useCallContract"; 
+import { useGameState } from "../hooks/useGameState";
 import ConnectModal from "../components/ConnectModal";
-import { ethers } from "ethers"; // 引入 ethers.js 庫
+import { ethers } from "ethers";
+import { EventLog } from "ethers";
+import { keccak256, encodePacked } from 'viem';
+type GameStatus = "waiting" | "betting" | "player" | "dealer" | "over";
+
 
 const BlackjackTable = () => {
   // demo modal controller
@@ -13,13 +17,19 @@ const BlackjackTable = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [withContract, setWithContract] = useState<boolean>(false);
+  const [isWaiting, setIsWaiting] = useState<boolean>(false);
+  const [gameStatus, setGameStatus] = useState<GameStatus>("betting");
 
   const [deck, setDeck] = useState<number[]>([]);
+  const [deckSeed, setDeckSeed] = useState<string>(""); // 牌組的 seed
+  const [gameId , setGameId] = useState<string>(""); // 遊戲 ID
+  const [revealedCards , setRevealedCards] = useState<number[]>([]);
+  const [playerCardCount  , setPlayerCardCount ] = useState<number>(0);
 
 
   const [playerBetAmount, setPlayerBetAmount] = useState<number>(0);
-  const [betAmount, setBetAmount] = useState<number>(0); // 下注金額
-  const [realBetAmount, setRealBetAmount] = useState<number>(0); // 實際下注金額
+  const [betAmount, setBetAmount] = useState<number>(0); 
+  const [realBetAmount, setRealBetAmount] = useState<number>(0); 
   
 
   // data controller
@@ -33,13 +43,12 @@ const BlackjackTable = () => {
   const [playerCards, setPlayerCards] = useState<string[]>([]);
 
   
-  const [isGameStarted, setIsGameStarted] = useState<boolean>(false); // 遊戲是否開始
+  const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
   const [isPlayerOver, setIsPlayerOver] = useState<boolean>(false); 
-  const [isDealerDrawing, setIsDealerDrawing] = useState(false);
-  const [isGameOver, setIsGameOver] = useState(false); // 遊戲是否結束
 
 
-  const gameState = useGameState(playerRawCards, dealerRawCards, isGameStarted, isPlayerOver); // 使用自定義的 Hook 來獲取遊戲狀態
+
+  const gameState = useGameState(playerRawCards, dealerRawCards, isGameStarted, isPlayerOver);
 
 
   useEffect(() => {
@@ -81,7 +90,6 @@ const BlackjackTable = () => {
       return "21! Blackjack!";
     }
   
-    // 如果目前仍有 Ace 被當作 11，就顯示 soft hand（例如 "5 / 15"）
     if (aceCount > 0 && (adjustedTotal !== total || total === adjustedTotal)) {
       const low = adjustedTotal - 10;
       if (low > 0 && adjustedTotal !== low) {
@@ -94,7 +102,7 @@ const BlackjackTable = () => {
   const transformCard = (cardIndex: number) => {
     const suits = ['C', 'D', 'H', 'S']; // 梅花、方塊、紅心、黑桃
     const suitIndex = Math.floor(cardIndex / 13);
-    const cardValue = (cardIndex % 13) + 1; // 1~13
+    const cardValue = (cardIndex % 13) + 1;
     const suitPrefix = suits[suitIndex];
     return `${suitPrefix}_${cardValue}`;
   }
@@ -127,6 +135,7 @@ const BlackjackTable = () => {
     setDealerCards(dealerGet.map((d: number) => transformCard(d)));
     setPlayerCards(playerGet.map((p: number) => transformCard(p)));
     setDealerScore(calculateHandValue(dealerGet.map((d: number) => Number(d))).toString());
+    console.log(dealerScore);
     setPlayerScore(calculateHandValue(playerGet.map((p: number) => Number(p))).toString());
   }
 
@@ -138,68 +147,154 @@ const BlackjackTable = () => {
   };
 
   // nonContract area
- const generateCards = async() => {
-    const newDeck = createShuffledDeck();
+ const generateCards = async(cardArr:number[]) => {
+    const newDeck = cardArr;
     const dealer = [newDeck[0], newDeck[1]];
     const player = [newDeck[2], newDeck[3]];
     gameSet(dealer, player);
-    gameSet(dealer, player);
     const remainingDeck = newDeck.slice(4);
+    setRevealedCards([dealer[0], dealer[1], player[0], player[1]]);
+    setPlayerCardCount(2);
     setDeck(remainingDeck);
 }
 
 
   // contract area
-  const fetchCards= async() => {
+
+  const solidityShuffle = (seedHex: string): number[] =>{
+    const deck: number[] = Array.from({ length: 52 }, (_, i) => i);
+    let seed = BigInt(seedHex);
+    for (let i = 51; i > 0; i--) {
+      const packed = encodePacked(['uint256', 'uint256'], [seed, BigInt(i)]);
+      const hash = keccak256(packed);
+      seed = BigInt(hash);
+  
+      const j = Number(seed % BigInt(i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }  
+    return deck;
+  }
+  const fetchCards = async () => {
     try {
       const contract = await getContract();
-      await contract.newGame();
-      const [dealerGet, playerGet] = await contract.getFirst4Cards();
-      const dealer = dealerGet.map((card: bigint) => Number(card));
-      const player = playerGet.map((card: bigint) => Number(card));
-      gameSet(dealer, player);
-    } catch (err) {
-      console.error("取得卡牌失敗：", err);
+      const seed = ethers.randomBytes(32);
+      const seedHex = ethers.hexlify(seed);
+      // console.log("Seed:", seedHex);
+      const deckHash = ethers.keccak256(seed);
+      setDeckSeed(seedHex);      
+      // console.log("Deck Hash:", deckHash);
+      const tx = await contract.newGame(deckHash,{
+        value: ethers.parseEther(betAmount.toString()), // 下注金額
+      });
+  
+      const receipt = await tx.wait();
+      // console.log("✅ Transaction Mined", receipt);
+  
+      // 使用 contract.queryFilter 直接抓事件
+      const logs = await contract.queryFilter(
+        contract.filters.GameCreated(),
+        receipt.blockNumber,
+        receipt.blockNumber
+      );
+      
+  
+      if (logs.length > 0) {
+        const event = logs[0] as EventLog;
+        const gameId = event.args.gameId;
+  
+        await contract.getGameInfo(gameId);
+        // console.log("🎮 Game Info:", {
+        //   player: gameInfo.player,
+        //   bet: gameInfo.bet.toString(),
+        //   deckSeed: gameInfo.deckSeed,
+        //   isActive: gameInfo.isActive,
+        //   gameId: gameId.toString(),
+        // });
+
+        setGameId(gameId.toString());
+        const fullDeck = solidityShuffle(seedHex);
+        generateCards(fullDeck);
+      } else {
+        console.warn("⚠️ Missing GameCreated Event (queryFilter)");
+      }
+    } catch (error) {
+      console.error("❌ Error Code:", error);
     }
-  }
-//   const fetchCards = async () => {
-// // 1. 呼叫智能合約的 newGame，傳入下注金額（wei）
-// const tx = await contract.newGame({ value: utils.parseEther("0.01") });
+  };
 
-// // 2. 等待交易完成
-// const receipt = await tx.wait();
+  const gameOverToContract = async (finalRevealedCards: number[], playerCardCount:number) => {
+    setIsWaiting(true);
+    try {
+      const contract = await getContract();
+      // console.log("📤 Sending game result:", {
+      //   gameId,
+      //   deckSeed,
+      //   revealedCards:finalRevealedCards,
+      //   playerCardCount: playerCardCount,
+      // });
+      const tx = await contract.endGame(
+        gameId,
+        deckSeed,         
+        finalRevealedCards,           
+        playerCardCount          
+      );
+  
+      const receipt = await tx.wait();
+      receipt.events?.forEach((event: any) => {
+        console.log("Event:", event.event, event.args);
+      });
+  
+      // console.log("📨 endGame tx confirmed:", receipt.transactionHash);
+  
+      // 可選：讀取 GameEnded 事件確認
+      const events = await contract.queryFilter(
+        contract.filters.GameEnded(),
+        receipt.blockNumber,
+        receipt.blockNumber
+      );
+      
+  
+      if (events.length > 0) {
+        const event = events[0] as EventLog;
+        console.log("✅ GameEnded Event:", event.args);
+      } else {
+        console.warn("⚠️ GameEnded event not found in block.");
+      }
+  
+    } catch (error) {
+      console.error("❌ handleGameOver error:", error);
+      setModalMessage("Failed to submit game result to contract ❌");
+      setIsModalOpen(true);
+    }
+  };
 
-// // 3. 從事件中取得 gameId 和其他資訊
-// const event = receipt.events?.find(e => e.event === "GameCreated");
 
-// if (event) {
-//   const gameId = event.args?.gameId;
-
-//   // 4. 呼叫合約的 view function 取得完整遊戲資料
-//   const gameInfo = await contract.getGameInfo(gameId);
-
-//   console.log("遊戲資訊：", {
-//     gameId,
-//     player: gameInfo.player,
-//     bet: ethers.utils.formatEther(gameInfo.bet),
-//     deckHash: gameInfo.deckHash,
-//     isActive: gameInfo.isActive
-//   });
-
-//   // 5. 儲存到前端狀態或跳轉到下一步遊戲邏輯
-// }
-// }
-
+  // player action
   const playerHit = () => {
     const nextCard = deck[0];
-    const newDeck = deck.slice(1);             // 移除這張牌
-    const newPlayerCards = [...playerRawCards, nextCard]; // 加入玩家手牌
-    setDeck(newDeck);                          // 更新牌堆
-    setPlayerRawCards(newPlayerCards);         // 更新玩家手牌
-    setPlayerCards(newPlayerCards.map((p: number) => transformCard(Number(p)))); // 更新顯示的手牌
-    setPlayerScore(calculateHandValue(newPlayerCards.map((p: number) => Number(p))).toString()); // 更新玩家分數
+    
+    const updatedRevealedCards = [...revealedCards, nextCard];
+    setRevealedCards(updatedRevealedCards);
+
+    const newPlayerCards = [...playerRawCards, nextCard];
+    setPlayerRawCards(newPlayerCards);
+
+    const newPlyerCount = playerCardCount + 1;
+    setPlayerCardCount(newPlyerCount);
+    setPlayerCards(newPlayerCards.map((p: number) => transformCard(Number(p))));
+
+    const playerScore = calculateHandValue(newPlayerCards.map((p: number) => Number(p))).toString();
+    setPlayerScore(playerScore);
+    const newDeck = deck.slice(1);
+    setDeck(newDeck);
+    
     if(scoreCount(calculateHandValue(newPlayerCards.map((p: number) => Number(p)))) > 21) {
+      setGameStatus("over");
       setTimeout(() => {
+        if (withContract) {
+          gameOverToContract(updatedRevealedCards,newPlyerCount); // 提交遊戲結果到合約
+        }
+        setGameStatus("over");
         setModalMessage("You Bust! 😢");
         setIsModalOpen(true);
       }, 1000); // 延遲 1 秒（1000 毫秒
@@ -207,74 +302,87 @@ const BlackjackTable = () => {
   }
   const playerStand = () => {
     setIsPlayerOver(true);
-    setIsDealerDrawing(true); // 開始莊家摸牌
+    setGameStatus("dealer");
   
-    setTimeout(() => {
-      let dealerCards = [...dealerRawCards];
-      let currentDeck = [...deck];
+    let dealerCards = [...dealerRawCards];
+    let currentDeck = [...deck];
   
-      const drawCard = () => {
-        const dealerScore = calculateHandValue(dealerCards);
+    let updatedRevealedCards = [...revealedCards];
   
-        if (scoreCount(dealerScore) >= 17) {
-          setDealerRawCards(dealerCards);
-          setDealerCards(dealerCards.map((d: number) => transformCard(Number(d))));
-          setDealerScore(dealerScore.toString());
-          setIsDealerDrawing(false); 
+    const drawCard = () => {
+      const dealerScore = calculateHandValue(dealerCards);
   
-          setTimeout(() => {
-            const playerScoreNum = scoreCount(playerScore);
-            const dealerScoreNum = scoreCount(dealerScore);
-            if (playerScoreNum > dealerScoreNum || dealerScoreNum > 21) {
-              setModalMessage('You Win! 🎉');
-              setIsModalOpen(true);
-              setPlayerBetAmount(playerBetAmount + realBetAmount * 2); // 玩家贏了，獲得兩倍的下注金額
-            } else if (playerScoreNum < dealerScoreNum) {
-              setModalMessage("You Lose! 😢");
-              setIsModalOpen(true);
-            } else {
-              setModalMessage("It's a Tie! 🤝");
-              setIsModalOpen(true);
-              setPlayerBetAmount(playerBetAmount + realBetAmount); // 平手，退回下注金額
-            }
-          }, 800);
-          setIsGameOver(true); // 遊戲結束
-      
-          return;
-        }
+      if (scoreCount(dealerScore) >= 17) {
+        setDealerRawCards(dealerCards);
+        setDealerCards(dealerCards.map((d: number) => transformCard(Number(d))));
+        setDealerScore(dealerScore.toString());
+        setGameStatus("over");
+        setTimeout(async() => {
+          const playerScoreNum = scoreCount(playerScore);
+          const dealerScoreNum = scoreCount(dealerScore);
+          setGameStatus("over");
+          if (playerScoreNum > dealerScoreNum || dealerScoreNum > 21) {
+            setModalMessage('You Win! 🎉');
+            setPlayerBetAmount(playerBetAmount + realBetAmount * 2);
+          } else if (playerScoreNum < dealerScoreNum) {
+            setModalMessage("You Lose! 😢");
+          } else {
+            setModalMessage("It's a Tie! 🤝");
+            setPlayerBetAmount(playerBetAmount + realBetAmount);
+          }
   
-        const nextCard = currentDeck.shift();
-        if (nextCard !== undefined) {
-          dealerCards.push(nextCard);
-          setDealerRawCards([...dealerCards]);
-          setDealerCards(dealerCards.map((d: number) => transformCard(Number(d))));
-          setDeck([...currentDeck]);
-        }
+          setIsModalOpen(true);
   
-        setTimeout(drawCard, 800);
-      };
+          if (withContract) {
+            await gameOverToContract(updatedRevealedCards, playerCardCount);
+            setIsWaiting(false);
+          }
+        }, 1200);
+        return;
+      }
   
-      drawCard();
-    }, 1000);
+      const nextCard = currentDeck.shift();
+      if (nextCard !== undefined) {
+        dealerCards.push(nextCard);
+        updatedRevealedCards.push(nextCard);
+  
+        setDealerRawCards([...dealerCards]);
+        setDealerCards(dealerCards.map((d: number) => transformCard(Number(d))));
+        setDeck([...currentDeck]);
+        setRevealedCards([...updatedRevealedCards]);
+      }
+  
+      setTimeout(drawCard, 800);
+    };
+  
+    setTimeout(drawCard, 1000);
   };
 
   const handleBet = async() => {
-    if (betAmount < 0 || betAmount > playerBetAmount) {
-     return  alert("請輸入有效的下注金額！");
+    if (betAmount <= 0 || betAmount > playerBetAmount) {
+     return  alert("Please enter a valid bet amount!");
     }
-    setIsGameStarted(true); // 開始遊戲
-    setPlayerBetAmount(playerBetAmount - betAmount); // 扣除玩家的下注金額
-    setRealBetAmount(Number(betAmount)); // 更新實際下注金額
+    setPlayerBetAmount(playerBetAmount - betAmount);
+    setRealBetAmount(Number(betAmount));
     if(withContract){
-      fetchCards();
+      setGameStatus("waiting");
+      await fetchCards();
     } else {
-      generateCards();
+      generateCards(createShuffledDeck());
     }
-
-    setBetAmount(0); // 清空輸入框
+    setGameStatus("player");
+    setIsGameStarted(true);
+    setBetAmount(0);
   };
 
   const resetGame = () => {
+    if (withContract) {
+
+    }
+    setDeckSeed("");
+    setGameId("");
+    setRevealedCards([]);
+    setPlayerCardCount(0);
     setDeck([]);
     setDealerRawCards([]);
     setPlayerRawCards([]);
@@ -283,9 +391,8 @@ const BlackjackTable = () => {
     setDealerScore("");
     setPlayerScore("");
     setIsPlayerOver(false);
-    setIsDealerDrawing(false);
-    setIsGameStarted(false);  // 🔁 關鍵：回到下注狀態
-    setIsGameOver(false);
+    setIsGameStarted(false);
+    setGameStatus("betting");
     setModalMessage("");
     setRealBetAmount(0);
     setIsModalOpen(false);
@@ -297,16 +404,19 @@ const BlackjackTable = () => {
     try {
       if (window.ethereum) {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        console.log("連接錢包成功", accounts);
         if (accounts && accounts.length > 0) {
           setWithContract(true);
-          console.log("連接錢包成功", accounts[0]);
+          const provider = new ethers.BrowserProvider(window.ethereum); // 建立 provider
+          const balance = await provider.getBalance(accounts[0]); // 取得 ETH 餘額（單位：wei）
+          const ethBalance = ethers.formatEther(balance); // 轉換成 ETH 格式
+          setPlayerBetAmount((Number(ethBalance)));
+  
         }
       } else {
-        alert("請安裝 MetaMask 擴充功能！");
+        alert("Please install MetaMask!");
       }
     } catch (err) {
-      console.error("連接錢包失敗", err);
+      console.error("MetaMask Error", err);
     } finally {
       setShowConnectModal(false);
     }
@@ -328,75 +438,68 @@ const BlackjackTable = () => {
   const displayedDealerScore = isPlayerOver 
     ? calculateHandValue(dealerRawCards) 
       : calculateHandValue(dealerRawCards.slice(1));
+  const displayedPlayerScore = calculateHandValue(playerRawCards)
+    ? calculateHandValue(playerRawCards)
+     : calculateHandValue(playerRawCards).toString();
 
 
   return (
-    <div className="w-full min-h-screen pt-[90px] bg-gradient-to-b from-green-900 to-green-600 flex flex-col items-center justify-center">
-      <div className="min-h-[80vh] flex flex-col items-center justify-between py-10 px-4 text-white font-semibold">
+    <div className="w-full min-h-screen pt-[50px] bg-gradient-to-b from-green-900 to-green-600 flex flex-col items-center justify-center">
+      <div className="min-h-[80vh] flex flex-col items-center py-10 px-4 text-white font-semibold">
         {/* Dealer */}
         <div className="flex flex-col items-center">
           <h2 className="text-xl mb-2">Dealer</h2>
           <div className="flex">{ 
             renderCards(dealerCards , !isPlayerOver) // hide first card
           }</div>
-          <h2 className="mt-1">Dealer Score:{ displayedDealerScore }</h2>
+          <h2 className="mt-1">Dealer Score: { displayedDealerScore }</h2>
 
         </div>
 
         {/* Player */}
-        <div className="flex flex-col items-center my-6 relative">
+        <div className="flex flex-col items-center my-3 relative">
           <p className="text-white mb-2 text-lg">
             Your Current Bet Amount: {playerBetAmount} ETH
           </p>
+          {/* {isWaiting && (
+            <p className="text-yellow-500 text-lg animate-pulse mt-4">
+              Waiting for cards to be shuffled...
+            </p>
+          )} */}
           {
-            !isGameStarted ? (
-              <div className="flex flex-col items-center my-6">
-                <label className="text-white mb-2 text-lg">Place Your Bet</label>
-                  <input
-                    value={betAmount}
-                    onChange={handleInputChange}
-                    className="px-4 py-2 rounded-lg border-2 border-[#1a1a1a] focus:outline-none w-60 text-white"
-                    placeholder="例如：0.01 ETH"
-                  />
-                  <button
-                    onClick={handleBet}
-                    className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-2 rounded-lg shadow-md"
-                  >
-                    Bet
-                  </button>
-              </div>
-            ) : (
-              <div className=" mt-1 text-lg">
-                {isGameOver ? 
-                (<p className="text-fuchsia-500 text-lg animate-pulse mt-4">
-                  Game Over...
-                </p>):
-                isDealerDrawing ? (
-                  <p className="text-yellow-500 text-lg animate-pulse mt-4">
-                    Dealer Turn...
-                  </p>
-                ):(
-                  <p className="text-red-500 text-lg animate-pulse mt-4">
-                    Player Turn...
-                  </p>
-                )}
-                <p className="text-white my-4 text-lg">
-                   Your Bet In This Turn: {realBetAmount} ETH 
-                </p>
-              </div>
-            )
-          }
-          
-          
+            <div className="text-lg">
+              {gameStatus === "over" && <p className="text-yellow-500 animate-pulse py-4">Game Over...</p>}
+              {gameStatus === "dealer" && <p className="text-fuchsia-500 animate-pulse py-4">Dealer Drawing Cards...</p>}
+              {gameStatus === "player" && <p className="text-red-500 animate-pulse py-4">Player turn...</p>}
+              {gameStatus === "waiting" && <p className="text-yellow-500 animate-pulse py-4">Waiting for transaction confirmation...</p>}
+              {gameStatus !== "betting" && <p className="text-white"> Your Bet Amount: {realBetAmount} ETH</p>}
+              {gameStatus === 'betting' && (
+                <div className="flex flex-col items-center">
+                  <label className="text-white mb-2 text-lg">Place Your Bet</label>
+                    <input
+                      value={betAmount}
+                      onChange={handleInputChange}
+                      className="px-4 py-2 rounded-lg border-2 border-[#1a1a1a] focus:outline-none w-60 text-white"
+                      placeholder="Enter bet amount"
+                    />
+                    <button
+                      onClick={handleBet}
+                      className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-2 rounded-lg shadow-md"
+                    >
+                      Bet
+                    </button>
+                </div>
+              )}
+            </div>
+          }          
         </div>
 
         
         <div className="flex flex-col items-center">
           <h2 className="text-xl mb-2">You</h2>
           <div className="flex">{renderCards(playerCards)}</div>
-          <h2 className="mt-1">Your Score:{ playerScore }</h2>
+          <h2 className="mt-1">Your Score: { displayedPlayerScore }</h2>
           <div className="flex gap-2 mt-4">
-
             {actionButtons.map((button) => (
               button.show && (
                 <button key={button.label} className="" onClick={button.onclick}>
@@ -406,22 +509,31 @@ const BlackjackTable = () => {
             ))}
           </div>
         </div>
-        {showConnectModal && (
-          <ConnectModal onConnect={()=> handleConnectWallet() } onClose={()=> handleCancelConnect() } />
-        )}
-        {isModalOpen && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div className="bg-white rounded-lg p-6 text-center shadow-lg w-[300px]">
-              <h2 className="text-xl text-black font-bold mb-4">{modalMessage}</h2>
-              <button
-                onClick={() => resetGame()}
-                className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
-              >
-                Close
-              </button>
+          {showConnectModal && (
+            <ConnectModal onConnect={()=> handleConnectWallet() } onClose={()=> handleCancelConnect() } />
+          )}
+          {isModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-white rounded-lg p-6 text-center shadow-lg w-[300px]">
+                <h2 className="text-xl text-black font-bold mb-4">{modalMessage}</h2>
+                {
+                  !isWaiting? (
+                    <button
+                      onClick={() => resetGame()}
+                      className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+                    >
+                      Confirm
+                    </button>
+                  ): (
+                    <p className="text-yellow-500 text-lg animate-pulse mt-4">
+
+                      Waiting for transaction confirmation...
+                    </p>
+                  )
+                } 
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
 

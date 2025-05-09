@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import CONTRACT_ABI from "../abi/BlackJack.json";
 
-const CONTRACT_ADDRESS = "0x30ff5ae9c98f8d3b66be5a6b2d3be5b35711ae69";
+const CONTRACT_ADDRESS = "0xb957db5e482cd63d2e42244594eec09bea22fa0c";
 
 export const getContract = async () => {
   if (!window.ethereum) throw new Error("請安裝 MetaMask");

@@ -1,56 +1,27 @@
-# React + TypeScript + Vite
+# A Modern Web3 Blackjack DApp
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**This demo** is a modern, neon-themed decentralized web application built with  **React(TypeScript)** and **Solidity**. It showcases a fully on-chain **Blackjack game**, visually styled with custom Tailwind CSS effects and animated elements to deliver an immersive Web3 experience.
 
-Currently, two official plugins are available:
+🔗 **Live Demo**: [https://oops11234.github.io/Portfolio/](https://oops11234.github.io/Portfolio/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Features
 
-## Expanding the ESLint configuration
+- ⚡️ Built with Vite for lightning-fast development and builds
+- 🔮 React + TypeScript frontend with modular component design
+- 🧠 Solidity smart contracts for Blackjack logic and state verification
+- 🌈 Custom neon-styled UI with Tailwind CSS v4
+- 🕹 On-chain randomness, manual seed handling, and verifiable game state
+- 🔗 Wallet integration with `ethers.js` and `viem`
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠 Tech Stack
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- Frontend: React 19, Vite, TypeScript, Tailwind CSS v4
+- Blockchain: Solidity (Sepolia testnet), Ethers.js, Viem
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚧 Roadmap
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-# Portfolio
-This is my Portfolio with React and Solidity
+The next milestone will focus on **optimizing the Blackjack table**, including:
+- Enhanced UX flow
+- Improved card animations and layout
+- Better separation of dealer/player UI elements

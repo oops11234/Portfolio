@@ -1,4 +1,3 @@
-import React from "react";
 import { useEffect, useState } from "react";
 const codeSamples = [
     "function initializeSystem(config) {",
@@ -47,7 +46,7 @@ const generateCodeLines = (count: number) =>
     return codeSamples[Math.floor(Math.random() * codeSamples.length)];
   });
 
-const LoadingScreen: React.FC = () => {
+const LoadingScreen = () => {
 	const [show, setShow] = useState(true);
   const repeatedLines = [...generateCodeLines(40), ...generateCodeLines(40)]; // repeat to fill animation loop
 	useEffect(() => {

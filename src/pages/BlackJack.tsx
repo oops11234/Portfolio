@@ -1,44 +1,55 @@
-import { useEffect, useState } from "react";
-import { getContract } from "../utils/contract";
+import { useState } from "react";
+import { TypeAnimation } from "react-type-animation";
+import { useNavigate } from "react-router-dom";
 
-const HelloPage = () => {
-  const [message, setMessage] = useState("");
-  const [newMessage, setNewMessage] = useState("");
-
-  useEffect(() => {
-    const fetchMessage = async () => {
-      const contract = await getContract();
-      const msg = await contract.message();
-      setMessage(msg);
-    };
-
-    fetchMessage();
-  }, []);
-
-  const updateMessage = async () => {
-    const contract = await getContract();
-    const tx = await contract.setMessage(newMessage);
-    await tx.wait(); // 等待交易完成
-    alert("訊息更新完成！");
-    setNewMessage("");
-  };
+const Index = () => {
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold">Hello Sepolia 👋</h1>
-      <p className="mt-4">目前訊息：<strong>{message}</strong></p>
+    <div className="neon-scan-bg min-h-screen relative">
+      <div className="relative z-10 flex flex-col items-center justify-center h-screen text-center px-4">
+        <h1 className="text-4xl md:text-6xl font-bold text-white text-neon">
+          Welcome to Neon World
+        </h1>
+        <p className="text-xl mt-6 text-cyan-200 text-neon-soft">
+          Feel the glow, embrace the night
+        </p>
+        <a
+          onClick={() => setShowModal(true)}
+          className="mt-8 px-8 py-3 border-2 border-cyan-400 rounded-xl text-cyan-300 font-medium text-lg hover:bg-cyan-400 hover:text-black transition text-neon-soft"
+        >
+          Explore
+        </a>
+      </div>
 
-      <input
-        className="border mt-4 p-2"
-        value={newMessage}
-        onChange={(e) => setNewMessage(e.target.value)}
-        placeholder="輸入新訊息"
-      />
-      <button onClick={updateMessage} className="ml-2 px-4 py-2 bg-blue-500 text-white rounded">
-        更新訊息
-      </button>
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 z-30 flex flex-col items-center justify-center">
+          <TypeAnimation
+            sequence={["Which part are you interested in?", 1500]}
+            speed={50}
+            wrapper="div"
+            className="text-xl md:text-3xl text-cyan-300 mb-6 text-neon-soft"
+          />
+          <div className="flex space-x-6">
+            <a
+              onClick={() => navigate("/contract")}
+             className="mt-8 px-8 py-3 border-2 border-cyan-400 rounded-xl text-cyan-300 font-medium text-lg hover:bg-cyan-400 hover:text-black transition text-neon-soft"
+            >
+              Frontend
+            </a>
+            <a
+              onClick={() => navigate("/blackjackTable")}
+              className="mt-8 px-8 py-3 border-2 border-cyan-400 rounded-xl text-cyan-300 font-medium text-lg hover:bg-cyan-400 hover:text-black transition text-neon-soft"
+            >
+              Smart Contract
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default HelloPage;
+export default Index;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState   } from "react";
 import getCardImage from "../utils/getCardImage"; 
 import { createShuffledDeck } from "../utils/createShuffledDeck"; 
 import { scoreCount } from "../utils/scoreCount";
@@ -50,8 +50,9 @@ const BlackjackTable = () => {
 
   const gameState = useGameState(playerRawCards, dealerRawCards, isGameStarted, isPlayerOver);
 
-
   useEffect(() => {
+    return () => {
+    };
   }, [deck]);
   
   // render cards
@@ -484,7 +485,7 @@ const BlackjackTable = () => {
                     />
                     <button
                       onClick={handleBet}
-                      className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-6 py-2 rounded-lg shadow-md"
+                      className=".common_button mt-4 px-6 py-2 rounded-md bg-black text-white hover:bg-blue-500 cursor-pointer transition-colors duration-200"
                     >
                       Bet
                     </button>
@@ -502,7 +503,7 @@ const BlackjackTable = () => {
           <div className="flex gap-2 mt-4">
             {actionButtons.map((button) => (
               button.show && (
-                <button key={button.label} className="" onClick={button.onclick}>
+                <button key={button.label} className="px-6 py-2 rounded-md bg-black text-white hover:bg-blue-500 cursor-pointer transition-colors duration-200" onClick={button.onclick}>
                   {button.label}
                 </button>
               )
@@ -520,7 +521,7 @@ const BlackjackTable = () => {
                   !isWaiting? (
                     <button
                       onClick={() => resetGame()}
-                      className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+                      className="mt-4 px-6 py-2 rounded-md bg-black text-white hover:bg-blue-500 cursor-pointer transition-colors duration-200"
                     >
                       Confirm
                     </button>

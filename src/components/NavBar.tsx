@@ -10,13 +10,20 @@ export default function Navbar() {
         isIndexPage ? "shadow-lg shadow-cyan-500/30" : ""
       }`}
     >
-      <h1 className="text-4xl font-bold text-neon">NeonWeb</h1>
+      <Link to="/" className="text-4xl font-bold text-neon
+      ">WebName</Link>
       <div className="flex items-center space-x-6">
         <Link
           to="/"
           className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
         >
           Home
+        </Link>
+        <Link
+          to="/contract"
+          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
+        >
+          Contract
         </Link>
         <Link
           to="/blackjackTable"

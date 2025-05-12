@@ -11,7 +11,7 @@ export default function Navbar() {
       }`}
     >
       <Link to="/" className="text-4xl font-bold text-neon
-      ">WebName</Link>
+      ">Cyber Park</Link>
       <div className="flex items-center space-x-6">
         <Link
           to="/"
@@ -19,12 +19,6 @@ export default function Navbar() {
         >
           Home
         </Link>
-        {/* <Link
-          to="/contract"
-          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
-        >
-          Contract
-        </Link> */}
         <Link
           to="/blackjackTable"
           className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"

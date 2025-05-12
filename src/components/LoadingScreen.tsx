@@ -63,11 +63,11 @@ const LoadingScreen = () => {
     <div className="fixed inset-0 bg-black z-50 font-mono flex flex-col justify-center px-20">
       <div className="absolute inset-0 overflow-hidden pointer-events-none pl-[40px]">
         <div className="code-stream animate-marquee h-[200%]">
-            <div className="pl-16 text-red-500 neon-red text-left text-2xl font-bold leading-relaxed whitespace-pre">
-                {repeatedLines.map((line, i) => (
-                <p key={i}>{line}</p>
-                ))}
-            </div>
+          <div className="pl-16 text-red-500 neon-red text-left text-2xl font-bold leading-relaxed whitespace-pre">
+            {repeatedLines.map((line, i) => (
+            <p key={i}>{line}</p>
+            ))}
+          </div>
         </div>
       </div>
 			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">

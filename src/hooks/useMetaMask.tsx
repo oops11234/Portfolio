@@ -8,7 +8,7 @@ export function useMetamaskAccount() {
 
   useEffect(() => {
     if (!window.ethereum) {
-      setError("MetaMask 未安裝");
+      setError("MetaMask unavailable");
       return;
     }
 
@@ -20,7 +20,7 @@ export function useMetamaskAccount() {
           setIsConnected(true);
         }
       } catch (err) {
-        setError("無法取得帳戶");
+        setError("accounts check failed");
       }
     };
 

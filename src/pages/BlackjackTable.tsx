@@ -8,6 +8,7 @@ import ConnectModal from "../components/ConnectModal";
 import { ethers } from "ethers";
 import { EventLog } from "ethers";
 import { keccak256, encodePacked } from 'viem';
+
 type GameStatus = "waiting" | "betting" | "player" | "dealer" | "over";
 
 
@@ -21,8 +22,8 @@ const BlackjackTable = () => {
   const [gameStatus, setGameStatus] = useState<GameStatus>("betting");
 
   const [deck, setDeck] = useState<number[]>([]);
-  const [deckSeed, setDeckSeed] = useState<string>(""); // 牌組的 seed
-  const [gameId , setGameId] = useState<string>(""); // 遊戲 ID
+  const [deckSeed, setDeckSeed] = useState<string>("");
+  const [gameId , setGameId] = useState<string>("");
   const [revealedCards , setRevealedCards] = useState<number[]>([]);
   const [playerCardCount  , setPlayerCardCount ] = useState<number>(0);
 
@@ -189,9 +190,6 @@ const BlackjackTable = () => {
       });
   
       const receipt = await tx.wait();
-      // console.log("✅ Transaction Mined", receipt);
-  
-      // 使用 contract.queryFilter 直接抓事件
       const logs = await contract.queryFilter(
         contract.filters.GameCreated(),
         receipt.blockNumber,
@@ -204,13 +202,6 @@ const BlackjackTable = () => {
         const gameId = event.args.gameId;
   
         await contract.getGameInfo(gameId);
-        // console.log("🎮 Game Info:", {
-        //   player: gameInfo.player,
-        //   bet: gameInfo.bet.toString(),
-        //   deckSeed: gameInfo.deckSeed,
-        //   isActive: gameInfo.isActive,
-        //   gameId: gameId.toString(),
-        // });
 
         setGameId(gameId.toString());
         const fullDeck = solidityShuffle(seedHex);
@@ -227,12 +218,6 @@ const BlackjackTable = () => {
     setIsWaiting(true);
     try {
       const contract = await getContract();
-      // console.log("📤 Sending game result:", {
-      //   gameId,
-      //   deckSeed,
-      //   revealedCards:finalRevealedCards,
-      //   playerCardCount: playerCardCount,
-      // });
       const tx = await contract.endGame(
         gameId,
         deckSeed,         
@@ -245,9 +230,6 @@ const BlackjackTable = () => {
         console.log("Event:", event.event, event.args);
       });
   
-      // console.log("📨 endGame tx confirmed:", receipt.transactionHash);
-  
-      // 可選：讀取 GameEnded 事件確認
       const events = await contract.queryFilter(
         contract.filters.GameEnded(),
         receipt.blockNumber,
@@ -293,12 +275,12 @@ const BlackjackTable = () => {
       setGameStatus("over");
       setTimeout(() => {
         if (withContract) {
-          gameOverToContract(updatedRevealedCards,newPlyerCount); // 提交遊戲結果到合約
+          gameOverToContract(updatedRevealedCards,newPlyerCount);
         }
         setGameStatus("over");
         setModalMessage("You Bust! 😢");
         setIsModalOpen(true);
-      }, 1000); // 延遲 1 秒（1000 毫秒
+      }, 1000);
     }
   }
   const playerStand = () => {
@@ -451,7 +433,7 @@ const BlackjackTable = () => {
         <div className="flex flex-col items-center">
           <h2 className="text-xl mb-2">Dealer</h2>
           <div className="flex">{ 
-            renderCards(dealerCards , !isPlayerOver) // hide first card
+            renderCards(dealerCards , !isPlayerOver)
           }</div>
           <h2 className="mt-1">Dealer Score: { displayedDealerScore }</h2>
 
@@ -462,11 +444,6 @@ const BlackjackTable = () => {
           <p className="text-white mb-2 text-lg">
             Your Current Bet Amount: {playerBetAmount} ETH
           </p>
-          {/* {isWaiting && (
-            <p className="text-yellow-500 text-lg animate-pulse mt-4">
-              Waiting for cards to be shuffled...
-            </p>
-          )} */}
           {
             <div className="text-lg">
               {gameStatus === "over" && <p className="text-yellow-500 animate-pulse py-4">Game Over...</p>}
@@ -527,7 +504,6 @@ const BlackjackTable = () => {
                     </button>
                   ): (
                     <p className="text-yellow-500 text-lg animate-pulse mt-4">
-
                       Waiting for transaction confirmation...
                     </p>
                   )

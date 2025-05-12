@@ -15,7 +15,7 @@ const Index = () => {
       {phase === "intro" && (
         <div className="z-10 space-y-6 animate-fadeIn">
           <h1 className="text-4xl md:text-6xl font-bold text-white text-neon">
-            Welcome to Neon World
+            Welcome to Cyber Park
           </h1>
           <p className="text-xl text-cyan-200 text-neon-soft">
             Feel the glow, embrace the night

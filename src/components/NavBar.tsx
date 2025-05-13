@@ -20,6 +20,12 @@ export default function Navbar() {
           Home
         </Link>
         <Link
+          to="/liveStream"
+          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
+        >
+          LiveStream
+        </Link>
+        <Link
           to="/blackjackTable"
           className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
         >

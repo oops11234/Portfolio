@@ -2,7 +2,7 @@ import { Link,useLocation  } from "react-router-dom";
 
 export default function Navbar() {
   const location = useLocation();
-  const lightBarOn = ["/", '/liveStream'];
+  const lightBarOn = ["/", '/LiveStream', '/CryptoMarket'];
   const isLightBarOne = lightBarOn.includes(location.pathname);
   return (
     <nav
@@ -20,13 +20,19 @@ export default function Navbar() {
           Home
         </Link>
         <Link
-          to="/liveStream"
+          to="/LiveStream"
           className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
         >
           LiveStream
         </Link>
         <Link
-          to="/blackjackTable"
+          to="/CryptoMarket"
+          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
+        >
+          CryptoMarket
+        </Link>
+        <Link
+          to="/BlackjackTable"
           className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
         >
           BlackjackTable

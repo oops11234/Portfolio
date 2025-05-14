@@ -3,6 +3,7 @@ import Navbar from "./components/NavBar.tsx";
 import LiveStream from "./pages/LiveStream.tsx.tsx";
 import BlackjackTable from "./pages/BlackjackTable.tsx";
 import Index from "./pages/Index.tsx";
+import CryptoMarket from "./pages/CryptoMarket.tsx";
 import LoadingScreen from "./components/LoadingScreen.tsx";
 import './App.css'
 
@@ -15,8 +16,9 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/liveStream" element={<LiveStream />} />
-          <Route path="/blackjackTable" element={<BlackjackTable />} />
+          <Route path="/LiveStream" element={<LiveStream />} />
+          <Route path="/CryptoMarket" element={<CryptoMarket />} />
+          <Route path="/BlackjackTable" element={<BlackjackTable />} />
         </Routes>
       </HashRouter>
     </>

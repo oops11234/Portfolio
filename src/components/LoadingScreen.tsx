@@ -60,19 +60,21 @@ const LoadingScreen = () => {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black z-50 font-mono flex flex-col justify-center px-20">
-      <div className="absolute inset-0 overflow-hidden pointer-events-none pl-[40px]">
+    <div className="fixed inset-0 bg-black z-50 font-mono flex flex-col justify-center px-6 sm:px-12 md:px-20">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none pl-6 sm:pl-12 md:pl-16">
         <div className="code-stream animate-marquee h-[200%]">
-          <div className="pl-16 text-red-500 neon-red text-left text-2xl font-bold leading-relaxed whitespace-pre">
+          <div className="text-red-500 neon-red text-left text-base sm:text-lg md:text-2xl font-bold leading-relaxed whitespace-pre">
             {repeatedLines.map((line, i) => (
-            <p key={i}>{line}</p>
+              <p key={i}>{line}</p>
             ))}
           </div>
         </div>
       </div>
-			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-				<h1 className="neon-red flicker text-[30px] ...">LOADING...</h1>
-			</div>
+
+      {/* LOADING 中心字樣 */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 text-center">
+        <h1 className="neon-red flicker text-lg sm:text-2xl md:text-[30px]">LOADING...</h1>
+      </div>
     </div>
   );
 };

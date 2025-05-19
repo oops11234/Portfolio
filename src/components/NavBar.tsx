@@ -1,43 +1,49 @@
-import { Link,useLocation  } from "react-router-dom";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import NavLinkItem from "./NavLinkItem";
 
 export default function Navbar() {
   const location = useLocation();
-  const lightBarOn = ["/", '/LiveStream', '/CryptoMarket'];
-  const isLightBarOne = lightBarOn.includes(location.pathname);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const lightBarOn = ["/", "/LiveStream", "/CryptoMarket"];
+  const isLightBarOn = lightBarOn.includes(location.pathname);
+
   return (
     <nav
-      className={`bg-black p-4 flex justify-between items-center fixed h-[90px] top-0 left-0 w-full text-white z-40 ${
-        isLightBarOne ? "shadow-lg shadow-cyan-500/30" : ""
+      className={`bg-black p-4 flex items-center justify-between fixed top-0 left-0 w-full h-[90px] z-40 text-white ${
+        isLightBarOn ? "shadow-lg shadow-cyan-500/30" : ""
       }`}
     >
-      <Link to="/" className="text-4xl font-bold text-neon
-      ">Cyber Park</Link>
-      <div className="flex items-center space-x-6">
-        <Link
-          to="/"
-          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
-        >
-          Home
-        </Link>
-        <Link
-          to="/LiveStream"
-          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
-        >
-          LiveStream
-        </Link>
-        <Link
-          to="/CryptoMarket"
-          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
-        >
-          CryptoMarket
-        </Link>
-        <Link
-          to="/BlackjackTable"
-          className="px-4 py-2 text-cyan-300 text-neon-soft hover:text-white hover:underline transition"
-        >
-          BlackjackTable
-        </Link>
+      {/* Logo */}
+      <Link to="/" className="text-4xl font-bold text-neon">
+        Cyber Park
+      </Link>
+
+      {/* 漢堡按鈕 */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="md:hidden text-cyan-300 text-3xl focus:outline-none"
+      >
+        ☰
+      </button>
+
+      {/* 導覽列表 - Desktop */}
+      <div className="hidden md:flex items-center space-x-6">
+        <NavLinkItem to="/">Home</NavLinkItem>
+        <NavLinkItem to="/LiveStream">LiveStream</NavLinkItem>
+        <NavLinkItem to="/CryptoMarket">CryptoMarket</NavLinkItem>
+        <NavLinkItem to="/BlackjackTable">BlackjackTable</NavLinkItem>
       </div>
+
+      {/* 導覽列表 - Mobile 展開 */}
+      {menuOpen && (
+        <div className="absolute top-[90px] left-0 w-full bg-black z-30 md:hidden flex flex-col shadow-lg shadow-cyan-500/30 border-glow-top">
+          <NavLinkItem to="/">Home</NavLinkItem>
+          <NavLinkItem to="/LiveStream">LiveStream</NavLinkItem>
+          <NavLinkItem to="/CryptoMarket">CryptoMarket</NavLinkItem>
+          <NavLinkItem to="/BlackjackTable">BlackjackTable</NavLinkItem>
+        </div>
+      )}
     </nav>
   );
 }

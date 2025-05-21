@@ -39,6 +39,8 @@ The upcoming development milestones will focus on expanding interactivity and vi
 - Improved card animations and layout polish
 - Better separation of dealer vs player UI zones
 - Animation-driven game result feedback
+- ✅ Implement `Surrender` option with proper payout logic
+- ✅ Add `Split` support for identical card pairs with UI & state handling
 
 ---
 

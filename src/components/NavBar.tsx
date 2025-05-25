@@ -43,7 +43,7 @@ export default function Navbar() {
           <NavLinkItem to="/LiveStream">LiveStream</NavLinkItem>
           <NavLinkItem to="/CryptoMarket">CryptoMarket</NavLinkItem>
           <NavLinkItem to="/BlackjackTable">BlackjackTable</NavLinkItem>
-          <NavLinkItem to="/NeonScene">NeonScene</NavLinkItem>
+          <NavLinkItem to="/CyberCity">CyberCity</NavLinkItem>
         </div>
       )}
     </nav>

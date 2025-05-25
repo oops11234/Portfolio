@@ -33,6 +33,7 @@ export default function Navbar() {
         <NavLinkItem to="/LiveStream">LiveStream</NavLinkItem>
         <NavLinkItem to="/CryptoMarket">CryptoMarket</NavLinkItem>
         <NavLinkItem to="/BlackjackTable">BlackjackTable</NavLinkItem>
+        <NavLinkItem to="/CyberCity">CyberCity</NavLinkItem>
       </div>
 
       {/* 導覽列表 - Mobile 展開 */}
@@ -42,6 +43,7 @@ export default function Navbar() {
           <NavLinkItem to="/LiveStream">LiveStream</NavLinkItem>
           <NavLinkItem to="/CryptoMarket">CryptoMarket</NavLinkItem>
           <NavLinkItem to="/BlackjackTable">BlackjackTable</NavLinkItem>
+          <NavLinkItem to="/NeonScene">NeonScene</NavLinkItem>
         </div>
       )}
     </nav>

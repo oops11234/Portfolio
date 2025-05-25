@@ -71,7 +71,7 @@ const Index = () => {
       {phase === "frontendMessage" && (
         <div className="z-10 space-y-10 animate-fadeIn text-center px-4">
           <TypeAnimation
-            sequence={["Sorry... Frontend is still under construction.", 1200]}
+            sequence={["Sorry... City is still under construction.", 1200]}
             speed={50}
             wrapper="div"
             className="text-2xl md:text-4xl text-cyan-300 text-neon-soft"
@@ -79,8 +79,11 @@ const Index = () => {
 
           <NeonFace />
 
-          <div className="flex justify-center">
-            <NeonButton onClick={() => navigate("/blackjackTable")}>
+          <div className="flex justify-between items-center space-x-4">
+            <NeonButton onClick={() => navigate("/CyberCity")}>
+              Go to See Building City
+            </NeonButton>
+            <NeonButton onClick={() => navigate("/BlackjackTable")}>
               Go to Blackjack instead
             </NeonButton>
           </div>

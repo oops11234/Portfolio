@@ -14,6 +14,7 @@
 - 🌈 Custom neon-styled UI with Tailwind CSS v4
 - 🕹 On-chain randomness, manual seed handling, and verifiable game state
 - 🔗 Wallet integration with `ethers.js` and `viem`
+- 🪩 3D elements powered by `Three.js` & `@react-three/fiber`
 
 ---
 
@@ -21,6 +22,7 @@
 
 - **Frontend**: React 19, Vite, TypeScript, Tailwind CSS v4
 - **Blockchain**: Solidity (Sepolia testnet), Ethers.js, Viem
+- **3D Graphics**: Three.js, React Three Fiber, Drei, Postprocessing (Bloom)
 
 ---
 
@@ -30,6 +32,7 @@ The upcoming development milestones will focus on expanding interactivity and vi
 
 ### 🎯 Next Milestone: 3D Showcase Integration
 - 🌐 Build an interactive **3D scene using Three.js**
+- 🏙 Expand **Cyber City** page with buildings, roads, and ambient effects
 - 🌀 Integrate with existing neon theme (glow, scanlines, cyberpunk ambience)
 - 🔄 React-based structure with `@react-three/fiber` for smooth composition
 - 🧩 Potential future use: NFT card visualization, contract visual debugger, or Web3 interactive UI
@@ -39,12 +42,18 @@ The upcoming development milestones will focus on expanding interactivity and vi
 - Improved card animations and layout polish
 - Better separation of dealer vs player UI zones
 - Animation-driven game result feedback
-- Implement `Surrender` option with proper payout logic
-- Add `Split` support for identical card pairs with UI & state handling
+- 🧩 Implement `Surrender` option with proper payout logic
+- 🧩 Add `Split` support for identical card pairs with UI & state handling
 
 ---
 
 ## 📝 Changelog
+
+### 2025-05-25
+
+- ✨ **3D Engine Integration**: Integrated `Three.js` + `@react-three/fiber`
+- 🏙 **Cyber City Page**: Added a new immersive 3D city scene with roads, cars, and neon buildings
+- 🚧 Future plan: Expand Cyber City content with modular buildings, animated signage, and interaction layers
 
 ### 2025-05-13
 

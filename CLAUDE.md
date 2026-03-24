@@ -55,7 +55,7 @@ This is a Web3 Blackjack DApp with a neon-themed cyberpunk aesthetic built on:
 | 3 | Hero 區塊 | 名字、職稱、TypeAnimation 打字效果 | [x] | 2026-03-22 |
 | 4 | About Me | 個人介紹霓虹卡片 | [x] | 2026-03-23 |
 | 5 | Skills | 霓虹 tag / 進度條展示前端技能 | [ ] | - |
-| 6 | Experience Timeline | 工作/學習經歷垂直時間軸 | [ ] | - |
+| 6 | Experience Timeline | 工作/學習經歷垂直時間軸 | [x] | 2026-03-24 |
 | 7 | Education | 教育背景區塊 | [ ] | - |
 | 8 | Projects | 作品集霓虹卡片網格 | [ ] | - |
 | 9 | GitHub Graph | 嵌入 GitHub 貢獻度活躍圖 | [ ] | - |

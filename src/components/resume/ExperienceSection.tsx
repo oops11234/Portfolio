@@ -95,14 +95,20 @@ export default function ExperienceSection({ experience }: { experience: Experien
       <SectionTitle>Experience</SectionTitle>
 
       <div className="relative">
-        {/* Center vertical line — desktop only */}
-        <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-cyan-500/25 -translate-x-1/2" />
 
         {/* Mobile: left-border timeline */}
-        <div className="md:hidden relative border-l-2 border-cyan-500/30 pl-6 space-y-8">
+        <div className="md:hidden relative pl-6 space-y-8">
           {experience.map((exp, i) => (
             <div key={i} className="relative">
-              <span className="absolute -left-[31px] top-2 w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] border-2 border-black" />
+              {/* Dot */}
+              <span className="absolute -left-[31px] top-2 w-3 h-3 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee] border-2 border-black z-10" />
+              {/* Connecting line (not for last item) */}
+              {i < experience.length - 1 && (
+                <span
+                  className="absolute w-0.5 bg-cyan-500/30"
+                  style={{ left: "-25px", top: "14px", height: "calc(100% + 32px)" }}
+                />
+              )}
               <ExperienceCard exp={exp} side="right" index={i} />
             </div>
           ))}
@@ -120,8 +126,14 @@ export default function ExperienceSection({ experience }: { experience: Experien
                 </div>
 
                 {/* Center dot */}
-                <div className="flex justify-center pt-5">
-                  <div className="w-3.5 h-3.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee] border-2 border-black shrink-0" />
+                <div className="relative flex justify-center pt-5 self-stretch">
+                  {i < experience.length - 1 && (
+                    <div
+                      className="absolute w-px bg-cyan-500/25 left-1/2 -translate-x-1/2"
+                      style={{ top: "27px", height: "calc(100% + 40px)" }}
+                    />
+                  )}
+                  <div className="w-3.5 h-3.5 rounded-full bg-cyan-400 shadow-[0_0_12px_#22d3ee] border-2 border-black shrink-0 relative z-10" />
                 </div>
 
                 {/* Right slot */}

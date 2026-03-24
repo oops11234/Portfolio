@@ -15,39 +15,41 @@
     {
       "category": "Frontend",
       "items": [
-        { "name": "React", "level": 90 },
+        { "name": "Vue 3", "level": 90 },
+        { "name": "React", "level": 85 },
         { "name": "TypeScript", "level": 85 },
-        { "name": "Vue 3", "level": 85 },
-        { "name": "Tailwind CSS", "level": 88 },
-        { "name": "Vite", "level": 80 },
-        { "name": "Three.js", "level": 65 },
-        { "name": "GSAP", "level": 70 },
-        { "name": "Nuxt 3", "level": 80 }
+        { "name": "Nuxt 3", "level": 80 },
+        { "name": "NEXT", "level": 80 },
+        { "name": "React Native", "level": 70 },
+        { "name": "Cocos Creator", "level": 60 }
+
       ]
     },
     {
-      "category": "Mobile",
+      "category": "Styling",
       "items": [
-        { "name": "React Native", "level": 78 },
-        { "name": "Cocos Creator", "level": 60 }
+        { "name": "Tailwind CSS", "level": 90 },
+        { "name": "SASS/SCSS", "level": 88 },
+        { "name": "GSAP", "level": 80 },
+        { "name": "Three.js", "level": 75 }
       ]
     },
+    
     {
       "category": "Web3",
       "items": [
         { "name": "Ethers.js", "level": 75 },
-        { "name": "Solidity", "level": 60 },
+        { "name": "Solidity", "level": 70 },
         { "name": "MetaMask", "level": 72 },
-        { "name": "Hardhat", "level": 58 }
+        { "name": "Remix", "level": 75 }
       ]
     },
     {
       "category": "Tools",
       "items": [
         { "name": "Git", "level": 85 },
-        { "name": "GitHub", "level": 85 },
-        { "name": "Figma", "level": 65 },
-        { "name": "VS Code", "level": 90 }
+        { "name": "Vite", "level": 80 },
+        { "name": "Google Analytics", "level": 75 }
       ]
     }
   ],
@@ -119,8 +121,8 @@
     "username": "你的GitHub帳號"
   },
   "contact": {
-    "github": "https://github.com/你的帳號",
-    "linkedin": "https://linkedin.com/in/你的帳號",
-    "email": "你的email@example.com"
+    "github": "https://github.com/oops11234",
+    "linkedin": "https://linkedin.com/in/weiling-lai-85692b210",
+    "email": "oops11234@gmail.com"
   }
 }

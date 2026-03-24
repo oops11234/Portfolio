@@ -4,12 +4,9 @@ import ContactSection from "../components/resume/ContactSection";
 import AboutSection from "../components/resume/AboutSection";
 import SkillsSection from "../components/resume/SkillsSection";
 import ExperienceSection from "../components/resume/ExperienceSection";
-import EducationSection from "../components/resume/EducationSection";
-import ProjectsSection from "../components/resume/ProjectsSection";
-import GitHubSection from "../components/resume/GitHubSection";
 
 export default function Resume() {
-  const { hero, about, skills, experience, education, projects, github, contact } = resumeData;
+  const { hero, about, skills, experience, contact } = resumeData;
 
   return (
     <div className="min-h-screen bg-black text-white pt-[90px] pb-20 px-4 md:px-10">
@@ -19,9 +16,9 @@ export default function Resume() {
         <AboutSection about={about} />
         <SkillsSection skills={skills} />
         <ExperienceSection experience={experience} />
-        <EducationSection education={education} />
-        <ProjectsSection projects={projects} />
-        <GitHubSection username={github.username} />
+        {/* <EducationSection education={education} /> */}
+        {/* <ProjectsSection projects={projects} /> */}
+        {/* <GitHubSection username={github.username} /> */}
       </div>
     </div>
   );

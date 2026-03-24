@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 
 // Mock NeonButton component
-const NeonButton = ({ children, onClick, className = "", disabled = false }) => (
+const NeonButton = ({ children, onClick, className = "", disabled = false }: { children: React.ReactNode; onClick?: () => void; className?: string; disabled?: boolean }) => (
   <button
     onClick={onClick}
     disabled={disabled}
@@ -44,13 +44,11 @@ interface BallState {
 const GaussianDrop = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ballControls = useAnimation();
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | null>(null);
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
-  const [withContract, setWithContract] = useState<boolean>(false);
-  
   // Game state
   const [gameStatus, setGameStatus] = useState<GameStatus>("betting");
   const [betAmount, setBetAmount] = useState<number>(0.01);
@@ -180,7 +178,7 @@ const GaussianDrop = () => {
       };
       
       const gravity = 0.10;
-      const friction = 0.997;
+
       const bounce = 0.65;
       const ballRadius = 8;
       

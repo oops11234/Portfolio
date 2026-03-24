@@ -1,0 +1,126 @@
+{
+  "hero": {
+    "name": "Rick",
+    "SurName":"Lai",
+    "title": "Frontend Developer",
+    "subtitle": "Building the future, one component at a time.",
+    "photo": "assets/images/photo.jpg"
+  },
+  "about": [
+    "I'm a frontend developer with over 4 years of experience building web and mobile applications across fintech, media, and gaming industries.",
+    "My journey started with optimizing Vue 2 applications for SEO and performance at CMoney, where I first learned how small technical decisions can have a big impact on real users. That curiosity drove me further — at Amber Network, I built SSR platforms with Nuxt 3, real-time features via WebSocket, and animated event pages with GSAP, learning to balance speed, interactivity, and clean code at scale. Most recently at S Ray Technology, I expanded into cross-platform mobile development with React Native, shipped apps to both the App Store and Google Play, and maintained Cocos Creator games — bridging the gap between web and native experiences.",
+    "Outside of work, I'm drawn to the intersection of frontend engineering and Web3. This portfolio itself is a reflection of that passion — a cyberpunk-themed Blackjack DApp built with React, Three.js, and Solidity on the Sepolia testnet. I build things because I'm genuinely curious about what's possible on the web."
+  ],
+  "skills": [
+    {
+      "category": "Frontend",
+      "items": [
+        { "name": "React", "level": 90 },
+        { "name": "TypeScript", "level": 85 },
+        { "name": "Vue 3", "level": 85 },
+        { "name": "Tailwind CSS", "level": 88 },
+        { "name": "Vite", "level": 80 },
+        { "name": "Three.js", "level": 65 },
+        { "name": "GSAP", "level": 70 },
+        { "name": "Nuxt 3", "level": 80 }
+      ]
+    },
+    {
+      "category": "Mobile",
+      "items": [
+        { "name": "React Native", "level": 78 },
+        { "name": "Cocos Creator", "level": 60 }
+      ]
+    },
+    {
+      "category": "Web3",
+      "items": [
+        { "name": "Ethers.js", "level": 75 },
+        { "name": "Solidity", "level": 60 },
+        { "name": "MetaMask", "level": 72 },
+        { "name": "Hardhat", "level": 58 }
+      ]
+    },
+    {
+      "category": "Tools",
+      "items": [
+        { "name": "Git", "level": 85 },
+        { "name": "GitHub", "level": 85 },
+        { "name": "Figma", "level": 65 },
+        { "name": "VS Code", "level": 90 }
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "company": "S Ray Technology Ltd (銳光管理顧問有限公司)",
+      "role": "Frontend Developer",
+      "period": "Aug 2025- Apr 2026",
+      "description": ["Built cross-platform mobile applications using React Native, delivering production-ready iOS and Android apps and successfully publishing them to the Apple App Store and Google Play."
+    ,"Developed the web version of the application using Vue 3, ensuring feature consistency and a responsive user experience across mobile and browser platforms.",
+    "Maintained and enhanced existing Cocos Creator v3 games, implementing remote asset management to support cross-version compatibility and minimize redundant deployments."
+    ]
+  
+    },
+    {
+      "company": "Amber Network (安璞科技資訊股份有限公司)",
+      "role": "Frontend Developer",
+      "period": "Sep 2022 - Dec 2024",
+      "description": [
+        "Built responsive SSR websites with Nuxt 3, TypeScript, and Tailwind CSS for fast performance and clean UI. Used WebSocket for real-time updates and i18n for bilingual support (ZH/EN). Integrated Google Analytics to optimize structure via traffic insights.",
+        "Maintained and optimized legacy codebases built with Vue 2 and Sass, ensuring stability and reducing technical debt.",
+        "Created visually dynamic event landing pages with Vue 2 and GSAP, enhancing user engagement through rich animations."
+      ]
+    },
+    {
+      "company": "CMoney Financial Network(CMoney全曜財經資訊股份有限公司)",
+      "role": "Frontend Developer",
+      "period": "Feb 2022 - Aug 2022",
+      "description": [
+        "Improved SEO performance of existing Vue 2-based websites by optimizing meta tags, page structure, and crawlability, resulting in higher search rankings and increased organic traffic.",
+        "Enhanced performance of Vue 2 applications by refactoring code, optimizing image loading, and managing front-end assets, significantly improving page load speed and user experience."
+      ]
+    },
+        {
+      "company": "W TAIPEI & Crown Melbourne",
+      "role": "BarTender",
+      "period": "Dec 2018 - Aug 2021",
+      "description": [
+        "Managed bar inventory, ordering, and cost control to ensure efficient operations.",
+        "Prepared a wide range of classic and signature cocktails, delivering high-quality service and enhancing guest satisfaction in upscale hotel and casino environments."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "學校名稱",
+      "department": "科系名稱",
+      "degree": "學士",
+      "period": "2018-09 ~ 2022-06"
+    }
+  ],
+  "projects": [
+    {
+      "name": "Cyber Park DApp",
+      "description": "Web3 黑傑克 DApp，賽博龐克霓虹風格，支援 MetaMask 錢包與 Sepolia 測試網。",
+      "tags": ["React", "Ethers.js", "Solidity", "Three.js", "Tailwind CSS"],
+      "github": "https://github.com/你的帳號/cyber-park",
+      "demo": ""
+    },
+    {
+      "name": "專案名稱",
+      "description": "專案描述",
+      "tags": ["React", "TypeScript"],
+      "github": "",
+      "demo": ""
+    }
+  ],
+  "github": {
+    "username": "你的GitHub帳號"
+  },
+  "contact": {
+    "github": "https://github.com/你的帳號",
+    "linkedin": "https://linkedin.com/in/你的帳號",
+    "email": "你的email@example.com"
+  }
+}
